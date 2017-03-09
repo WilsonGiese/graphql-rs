@@ -3,8 +3,6 @@
 //! Spec:
 //!     http://facebook.github.io/graphql/
 
-use std::str::FromStr;
-
 //! http://facebook.github.io/graphql/#sec-Int-Value
 pub IntValue = {
     <IntegerPart>
@@ -15,8 +13,10 @@ pub IntegerPart = {
     <OptionalNegativeSign> <NonZeroDigit> <Digit>
 };
 
-
 //! Symbols
 Digit: str = r"[0-9]" => <>
 NonZeroDigit: str = r"[1-9]" => <>
 OptionalNegativeSign: str = r"-?" => <>
+Whitespace: str = r"\u{9}|\u{20}" => <>;
+LineTerminator: str = r"\u{0xA}|(\u{0xD}\u{0xA})|\u{0xD}" => <>;
+Comma: str = r"," => <>;
