@@ -87,4 +87,8 @@ fn test() {
     assert!(Lexer::new("-01;").parse().is_err());
     assert!(Lexer::new("abc;").parse().is_err());
     assert!(Lexer::new("-zyx;").parse().is_err());
+    assert!(Lexer::new("1").parse().is_err());
+    assert!(Lexer::new("0").parse().is_err());
+    assert!(Lexer::new("-1").parse().is_err());
+    assert!(Lexer::new("123456789").parse().is_err());
 }
