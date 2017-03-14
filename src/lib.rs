@@ -24,15 +24,10 @@ impl Lexer {
     }
 
     pub fn accept_int(&mut self) -> Result<(), String> {
-        if self.accept_negative_sign().is_ok() {
-            if self.is('0').is_ok() {
-                Ok(())
-            } else {
-                while self.accept_digit().is_ok() { }
-                Ok(())
-            }
+        self.accept_negative_sign(); // Optional, doesn't matter if Ok or Err
+        if self.is('0').is_ok() {
+            Ok(())
         } else {
-            try!(self.accept_nonzero_digit());
             while self.accept_digit().is_ok() { }
             Ok(())
         }
@@ -51,21 +46,6 @@ impl Lexer {
         }
 
         Err(format!("Expected digit, found: {}", self.source[self.position]))
-    }
-
-    pub fn accept_nonzero_digit(&mut self) -> Result<(), String> {
-        let re = Regex::new(r"[1-9]").unwrap();
-
-        if self.position < self.source.len() {
-            if re.is_match(&mut self.source[self.position].to_string()) {
-                self.bump();
-                return Ok(());
-            }
-        } else {
-            return Err(format!("Expected non-zero digit, found EOF"));
-        }
-
-        Err(format!("Expected non-zero digit, found: {}", self.source[self.position]))
     }
 
     pub fn accept_negative_sign(&mut self) -> Result<(), String> {
@@ -95,14 +75,15 @@ impl Lexer {
     }
 }
 
-
 #[test]
 fn test() {
     assert!(Lexer::new("1;").parse().is_ok());
+    assert!(Lexer::new("0;").parse().is_ok());
     assert!(Lexer::new("159;").parse().is_ok());
     assert!(Lexer::new("-124;").parse().is_ok());
     assert!(Lexer::new("-0;").parse().is_ok());
     assert!(Lexer::new("123456789;").parse().is_ok());
+    assert!(Lexer::new("01;").parse().is_err());
     assert!(Lexer::new("-01;").parse().is_err());
     assert!(Lexer::new("abc;").parse().is_err());
     assert!(Lexer::new("-zyx;").parse().is_err());
